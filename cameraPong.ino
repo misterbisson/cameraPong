@@ -1,17 +1,31 @@
 /*
 MenuBackend library by Alexander Brevig 
-download it at http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
+documentation (different version): http://wiring.org.co/reference/libraries/MenuBackend/index.html
+download: http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
+
+The version included with Wiring appears to be newer, but by the same author as the 1.4 version used here. 
+If I was cool, I'd work out the bugs that prevent the Wiring version from working in Arduino. I'm not cool yet.
 */
 #include <MenuBackend.h>
 
 /*
 serLCD library by Cody B. Null
-download it at http://playground.arduino.cc/Code/SerLCD
+documentation: http://playground.arduino.cc/Code/SerLCD
+download serLCD.h: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=1 
+download serLCD.cpp: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=2
 
 The library requires SoftwareSerial.h to be included previously. I'm not clear why yet, but I think that's a bug.
 */
 #include <SoftwareSerial.h>
 #include <serLCD.h>
+
+/*
+IRremote library by Ken Shirriff
+repo: https://github.com/shirriff/Arduino-IRremote
+download: https://github.com/shirriff/Arduino-IRremote/archive/master.zip
+*/
+#include <IRremote.h>
+
 
 // Define the menu objects
 MenuBackend menu = MenuBackend( menuUseEvent, menuChangeEvent );
