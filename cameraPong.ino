@@ -5,7 +5,6 @@ serLCD lcd( 8 );
 
 // this controls the menu backend and the event generation
 #include <MenuBackend.h>
-
 MenuBackend menu = MenuBackend( menuUseEvent, menuChangeEvent );
   //beneath is list of menu items needed to build the menu
   MenuItem settings_video = MenuItem( "Video" );
@@ -52,8 +51,8 @@ void menuSetup()
 // menu item behaviors
 void menuUseEvent( MenuUseEvent used )
 {
-  Serial.print("Menu use ");
-  Serial.println(used.item.getName());
+  Serial.print( "Menu use " );
+  Serial.println( used.item.getName() );
 }
 
 // menu item navigation
