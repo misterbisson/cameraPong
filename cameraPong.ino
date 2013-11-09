@@ -1,10 +1,19 @@
-// get and init the LCD driver
+/*
+MenuBackend library by Alexander Brevig 
+download it at http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
+*/
+#include <MenuBackend.h>
+
+/*
+serLCD library by Cody B. Null
+download it at http://playground.arduino.cc/Code/SerLCD
+
+The library requires SoftwareSerial.h to be included previously. I'm not clear why yet, but I think that's a bug.
+*/
 #include <SoftwareSerial.h>
 #include <serLCD.h>
-serLCD lcd( 8 );
 
-// this controls the menu backend and the event generation
-#include <MenuBackend.h>
+// Define the menu objects
 MenuBackend menu = MenuBackend( menuUseEvent, menuChangeEvent );
   //beneath is list of menu items needed to build the menu
   MenuItem settings_video = MenuItem( "Video" );
@@ -28,12 +37,12 @@ MenuBackend menu = MenuBackend( menuUseEvent, menuChangeEvent );
     MenuItem settings_photo_direction = MenuItem( "Direction" );
     MenuItem settings_photo_start = MenuItem( "Start" );
 
-//this function builds the menu and connects the correct items together
+// this function builds the menu and connects the correct items together
 void menuSetup()
 {
-  menu.getRoot().add( settings_video );
 
   // all the top-level menus
+  menu.getRoot().add( settings_video );
   settings_video.addRight( settings_photo );
 
   // the submenus of settings_video
@@ -51,8 +60,8 @@ void menuSetup()
 // menu item behaviors
 void menuUseEvent( MenuUseEvent used )
 {
-  Serial.print( "Menu use " );
-  Serial.println( used.item.getName() );
+  Serial.print("Menu use ");
+  Serial.println(used.item.getName());
 }
 
 // menu item navigation
@@ -64,11 +73,14 @@ void menuChangeEvent( MenuChangeEvent changed )
   Serial.println( changed.to.getName() );
 }
 
+
+// get and init the LCD driver
+serLCD lcd( 8 );
+
 void setup()
 {
   menuSetup();
   lcd.print( "cameraPong" );
-
 }
 
 void loop()
