@@ -109,10 +109,10 @@ void menuSetup()
 
   // the submenus of settings_video
   settings_video.add( settings_video_time ).addRight( settings_video_distance ).addRight( settings_video_direction ).addRight( settings_video_acceleration ).addRight( settings_video_start );
-    settings_video_direction.add( settings_video_direction_left ).add( settings_video_direction_left );
-    settings_video_acceleration.add( settings_video_acceleration_easing ).add( settings_video_acceleration_linear );
-    settings_video_start.add( settings_video_start_pause ).add( settings_video_start_reverse );
-    settings_video_start_pause.add( settings_video_start_end ).add( settings_video_start_return );
+    settings_video_direction.add( settings_video_direction_left ).addRight( settings_video_direction_right );
+    settings_video_acceleration.add( settings_video_acceleration_easing ).addRight( settings_video_acceleration_linear );
+    settings_video_start.add( settings_video_start_pause ).addRight( settings_video_start_reverse );
+    settings_video_start_pause.add( settings_video_start_end ).addRight( settings_video_start_return );
 
   // the submenus of settings_photo
   settings_photo.add( settings_photo_interval ).addRight( settings_photo_frames ).addRight( settings_photo_distance ).addRight( settings_photo_direction ).addRight( settings_photo_start );
@@ -121,21 +121,21 @@ void menuSetup()
 // menu item behaviors
 void menuUseEvent( MenuUseEvent used )
 {
-  Serial.print( "Menu use " );
-  Serial.println( used.item.getName() );
+  lcd.clear();
+  lcd.print( "Using menu: " );
+  lcd.print( used.item.getName() );
 }
 
 // menu item navigation
 void menuChangeEvent( MenuChangeEvent changed )
 {
-  Serial.print( "Menu change " );
-  Serial.print( changed.from.getName() );
-  Serial.print( " " );
-  Serial.println( changed.to.getName() );
+  lcd.clear();
+  lcd.print( "Current menu: " );
+  lcd.print( changed.to.getName() );
 }
 
 // read the input from the IR
-void readIR()
+void navigate()
 {
   if ( irRecv.decode( &irRecv_results ) ) 
   {
@@ -160,8 +160,11 @@ void readIR()
     switch ( resultCode )
     {
       case irButton_power :
+        menu.moveUp();
+/*
         lcd.clear();
         lcd.print( "Power" );
+*/
         break;
 
       case irButton_a :
@@ -180,28 +183,43 @@ void readIR()
         break;
 
       case irButton_up :
+        menu.moveUp();
+/*
         lcd.clear();
         lcd.print( "Up" );
+*/
         break;
 
       case irButton_down :
+        menu.moveDown();
+/*
         lcd.clear();
         lcd.print( "Down" );
+*/
         break;
 
       case irButton_left :
+        menu.moveLeft();
+/*
         lcd.clear();
         lcd.print( "Left" );
+*/
         break;
 
       case irButton_right :
+        menu.moveRight();
+/*
         lcd.clear();
         lcd.print( "Right" );
+*/
         break;
 
       case irButton_circle :
+        menu.use();
+/*
         lcd.clear();
         lcd.print( "Circle" );
+*/
         break;
 
       default :
@@ -219,7 +237,6 @@ void setup()
 
   irRecv.enableIRIn(); // Start the receiver
 
-
   lcd.clear();
   lcd.print( "   cameraPong   " );
   lcd.setSplash();
@@ -227,6 +244,5 @@ void setup()
 
 void loop()
 {
-  readIR();
-//  navigateMenus();
+  navigate();
 }
