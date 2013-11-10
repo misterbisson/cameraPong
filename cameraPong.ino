@@ -1,5 +1,5 @@
 /*
-MenuBackend library by Alexander Brevig 
+MenuBackend library by Alexander Brevig, LGPL v2.1
 documentation (different version): http://wiring.org.co/reference/libraries/MenuBackend/index.html
 download: http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
 
@@ -9,7 +9,7 @@ If I was cool, I'd work out the bugs that prevent the Wiring version from workin
 #include <MenuBackend.h>
 
 /*
-serLCD library by Cody B. Null
+serLCD library by Cody B. Null, GPL v2 (as a derivitive of https://github.com/arduino/Arduino/tree/master/libraries/LiquidCrystal , which appears to be licensed GPL v2 according to the repo)
 documentation: http://playground.arduino.cc/Code/SerLCD
 download serLCD.h: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=1 
 download serLCD.cpp: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=2
@@ -20,11 +20,28 @@ The library requires SoftwareSerial.h to be included previously. I'm not clear w
 #include <serLCD.h>
 
 /*
-IRremote library by Ken Shirriff
+IRremote library by Ken Shirriff, LGPL v2.1
 repo: https://github.com/shirriff/Arduino-IRremote
 download: https://github.com/shirriff/Arduino-IRremote/archive/master.zip
 */
 #include <IRremote.h>
+
+/*
+AccelStepper library by Mike McCauley, GPL v2
+documentation: http://www.airspayce.com/mikem/arduino/AccelStepper/
+download: http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.37.zip
+*/
+#include <AccelStepper.h>
+
+int motorSpeed = 9600; //maximum steps per second (about 3rps / at 16 microsteps)
+int motorAccel = 80000; //steps/second/second to accelerate
+
+int motorDirPin = 2; //digital pin 2
+int motorStepPin = 3; //digital pin 3
+
+//set up the accelStepper intance
+//the "1" tells it we are using a driver
+AccelStepper stepper(1, motorStepPin, motorDirPin); 
 
 
 // Define the menu objects
