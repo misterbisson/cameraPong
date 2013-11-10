@@ -157,7 +157,7 @@ void readIR()
     // This switch statement checks the received IR code against
     // all of the known codes. Each button press produces a 
     // serial output, and has an effect on the LED output.
-    switch (resultCode)
+    switch ( resultCode )
     {
       case irButton_power :
         lcd.clear();
