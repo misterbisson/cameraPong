@@ -99,6 +99,28 @@ AccelStepper stepper( 1, motorStepPin, motorDirPin );
 
 
 
+/*
+SimpleTimer library by Marcello Romani, LGPL 2.1+
+documentation: http://playground.arduino.cc//Code/SimpleTimer
+download SimpleTimer.h: http://playground.arduino.cc//Code/SimpleTimer?action=sourceblock&num=2
+download SimpleTimer.cpp: http://playground.arduino.cc//Code/SimpleTimer?action=sourceblock&num=3
+*/
+
+#include <SimpleTimer.h>
+SimpleTimer timer;
+
+/*
+Positioning switches
+The absolution position of the camera sled is determined when reed 
+switches in the sled are triggered by magnets at each end of the rail
+*/
+int posLeft_pin    = 5;
+int posLeft_state  = 0;
+int posRight_pin   = 6;
+int posRight_state = 0;
+
+
+
 // this function builds the menu and connects the correct items together
 void menuSetup()
 {
@@ -240,9 +262,52 @@ void setup()
   lcd.clear();
   lcd.print( "   cameraPong   " );
   lcd.setSplash();
+
+int posLeft_pin    = 5;
+int posLeft_state  = 0;
+int posRight_pin   = 6;
+int posRight_state = 0;
+
+  pinMode( posLeft_pin, INPUT_PULLUP );
+  pinMode( posRight_pin, INPUT_PULLUP );
 }
 
 void loop()
 {
   navigate();
+
+  posLeft_state  = digitalRead( posLeft_pin );
+  posRight_state = digitalRead( posRight_pin );
 }
+
+class railPlan
+{
+  public:
+    railPlan( AccelStepper& stepper, int positionStart_pin, int positionEnd_pin );
+    int   resetPosition();
+    long  positionNow();
+    long  positionStart();
+    long  positionLeft();
+    long  positionEnd();
+    long  positionRight();
+  private:
+    int   setPositionStart();
+    int   setPositionEnd();
+    long  _positionStart;
+    int   _positionStart_pin;
+    int   _positionStart_state;
+    long  _positionEnd;
+    int   _positionEnd_pin;
+    int   _positionEnd_state;
+  AccelStepper& _stepper;
+};
+
+railPlan::railPlan( AccelStepper& stepper, int positionStart_pin, int positionEnd_pin ) :
+  _stepper( stepper )
+{
+  delay( 15 );
+};
+
+railPlan superplan( stepper, 6, 8 );
+
+
