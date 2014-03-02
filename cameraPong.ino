@@ -253,33 +253,6 @@ void navigate()
   }
 }
 
-void setup()
-{
-  menuSetup();
-
-  irRecv.enableIRIn(); // Start the receiver
-
-  lcd.clear();
-  lcd.print( "   cameraPong   " );
-  lcd.setSplash();
-
-int posLeft_pin    = 5;
-int posLeft_state  = 0;
-int posRight_pin   = 6;
-int posRight_state = 0;
-
-  pinMode( posLeft_pin, INPUT_PULLUP );
-  pinMode( posRight_pin, INPUT_PULLUP );
-}
-
-void loop()
-{
-  navigate();
-
-  posLeft_state  = digitalRead( posLeft_pin );
-  posRight_state = digitalRead( posRight_pin );
-}
-
 class railPlan
 {
   public:
@@ -308,6 +281,42 @@ railPlan::railPlan( AccelStepper& stepper, int positionStart_pin, int positionEn
   delay( 15 );
 };
 
+long railPlan::positionNow()
+{
+  return _stepper.currentPosition();
+};
+
 railPlan superplan( stepper, 6, 8 );
 
+void setup()
+{
+  menuSetup();
+
+  irRecv.enableIRIn(); // Start the receiver
+
+  lcd.clear();
+  lcd.print( "   cameraPong   " );
+  lcd.setSplash();
+
+  pinMode( posLeft_pin, INPUT_PULLUP );
+  pinMode( posRight_pin, INPUT_PULLUP );
+
+  stepper.setMaxSpeed(300);
+  stepper.setAcceleration( 15 );
+  stepper.runToNewPosition( 1200 );
+
+  lcd.clear();
+  lcd.print( superplan.positionNow() );
+}
+
+void loop()
+{
+/*
+  navigate();
+
+  posLeft_state  = digitalRead( posLeft_pin );
+  posRight_state = digitalRead( posRight_pin );
+*/
+  delay( 200 );
+}
 
