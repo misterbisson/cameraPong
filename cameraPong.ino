@@ -1,12 +1,10 @@
 /*
 MenuBackend library by Alexander Brevig, LGPL v2.1
 documentation (different version): http://wiring.org.co/reference/libraries/MenuBackend/index.html
-download: http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
-
-The version included with Wiring appears to be newer, but by the same author as the 1.4 version used here. 
-If I was cool, I'd work out the bugs that prevent the Wiring version from working in Arduino. I'm not cool yet.
+download (previous version): http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
+download (my forked version): https://github.com/misterbisson/MenuBackendPlus
 */
-#include <MenuBackend.h>
+#include <MenuBackendPlus.h>
 
 /*
 Using examples from: http://www.coagula.org/content/pages/tutorial-manage-menu-and-lcd-display-arduino
@@ -51,7 +49,7 @@ The libraries require SPI and Wire as well.
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-// init the display driver using software SPI
+// init the display driver using software SPI, pin assignments as follows
 #define OLED_MOSI   9
 #define OLED_CLK   10
 #define OLED_DC     6
@@ -73,18 +71,18 @@ Using examples from: https://learn.sparkfun.com/tutorials/ir-control-kit-hookup-
 Define the IR remote button codes. We're only using the least signinficant two bytes of these codes. Each one should actually 
 have 0x10EF in front of it. Find these codes by running the IRrecvDump example sketch included with the IRremote library.
 */
-const uint16_t irButton_power = 0xD827; // i.e. 0x10EFD827
-const uint16_t irButton_a = 0xF807;
-const uint16_t irButton_b = 0x7887;
-const uint16_t irButton_c = 0x58A7;
-const uint16_t irButton_up = 0xA05F;
-const uint16_t irButton_down = 0x00FF;
-const uint16_t irButton_left = 0x10EF;
-const uint16_t irButton_right = 0x807F;
+const uint16_t irButton_power  = 0xD827; // i.e. 0x10EFD827
+const uint16_t irButton_a      = 0xF807;
+const uint16_t irButton_b      = 0x7887;
+const uint16_t irButton_c      = 0x58A7;
+const uint16_t irButton_up     = 0xA05F;
+const uint16_t irButton_down   = 0x00FF;
+const uint16_t irButton_left   = 0x10EF;
+const uint16_t irButton_right  = 0x807F;
 const uint16_t irButton_circle = 0x20DF;
 
-// assign pin 11 as a soft serial port to receive serialized IR signals
-IRrecv irRecv( 10 );
+// assign pin 5 as a soft serial port to receive serialized IR signals
+IRrecv irRecv( 5 );
 decode_results irRecv_results; // This will store our IR received codes
 uint16_t irRecv_last = 0; // This keeps track of the last code RX'd
 
@@ -129,9 +127,9 @@ Positioning switches
 The absolution position of the camera sled is determined when reed 
 switches in the sled are triggered by magnets at each end of the rail
 */
-int posLeft_pin    = 5;
+int posLeft_pin    = 0;
 int posLeft_state  = 0;
-int posRight_pin   = 6;
+int posRight_pin   = 1;
 int posRight_state = 0;
 
 
@@ -279,7 +277,6 @@ void setup()
   display.setCursor( 5, 35 );
   display.println( "cameraPong" );
   display.display();
- 
 
   menuSetup();
 
