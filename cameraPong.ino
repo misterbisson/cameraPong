@@ -35,19 +35,31 @@ MenuBackend menu = MenuBackend( menuUseEvent, menuChangeEvent );
     MenuItem settings_photo_direction = MenuItem( "Direction" );
     MenuItem settings_photo_start = MenuItem( "Start" );
 
+
+
 /*
-serLCD library by Cody B. Null, GPL v2 (as a derivitive of https://github.com/arduino/Arduino/tree/master/libraries/LiquidCrystal , which appears to be licensed GPL v2 according to the repo)
-documentation: http://playground.arduino.cc/Code/SerLCD
-download serLCD.h: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=1 
-download serLCD.cpp: http://playground.arduino.cc//Code/SerLCD?action=sourceblock&num=2
+Adafruit_SSD1306 and Adafruit_GFX libraries by Adafruit Industries, BSD licensed
+documentation: http://learn.adafruit.com/adafruit-gfx-graphics-library/overview 
+               and http://learn.adafruit.com/monochrome-oled-breakouts/
+download Adafruit_GFX: https://github.com/adafruit/Adafruit-GFX-Library
+download Adafruit_SSD1306: https://github.com/adafruit/Adafruit_SSD1306
 
-The library requires SoftwareSerial.h to be included previously. I'm not clear why yet, but I think that's a bug.
+The libraries require SPI and Wire as well.
 */
-#include <SoftwareSerial.h>
-#include <serLCD.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-// get and init the LCD driver, assign pin 8 as a soft serial port to send content to the LCD
-serLCD lcd( 8 );
+// init the display driver using software SPI
+#define OLED_MOSI   9
+#define OLED_CLK   10
+#define OLED_DC     6
+#define OLED_CS     8
+#define OLED_RESET  7
+Adafruit_SSD1306 display( OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS );
+
+
 
 /*
 IRremote library by Ken Shirriff, LGPL v2.1
@@ -75,6 +87,7 @@ const uint16_t irButton_circle = 0x20DF;
 IRrecv irRecv( 10 );
 decode_results irRecv_results; // This will store our IR received codes
 uint16_t irRecv_last = 0; // This keeps track of the last code RX'd
+
 
 
 /*
@@ -108,6 +121,8 @@ download SimpleTimer.cpp: http://playground.arduino.cc//Code/SimpleTimer?action=
 
 #include <SimpleTimer.h>
 SimpleTimer timer;
+
+
 
 /*
 Positioning switches
@@ -143,17 +158,17 @@ void menuSetup()
 // menu item behaviors
 void menuUseEvent( MenuUseEvent used )
 {
-  lcd.clear();
-  lcd.print( "Using menu: " );
-  lcd.print( used.item.getName() );
+  display.clearDisplay();
+  display.println( "Using menu: " );
+  display.println( used.item.getName() );
 }
 
 // menu item navigation
 void menuChangeEvent( MenuChangeEvent changed )
 {
-  lcd.clear();
-  lcd.print( "Current menu: " );
-  lcd.print( changed.to.getName() );
+  display.clearDisplay();
+  display.println( "Current menu: " );
+  display.println( changed.to.getName() );
 }
 
 // read the input from the IR
@@ -184,139 +199,113 @@ void navigate()
       case irButton_power :
         menu.moveUp();
 /*
-        lcd.clear();
-        lcd.print( "Power" );
+        display.clearDisplay();
+        display.println( "Power" );
 */
         break;
 
       case irButton_a :
-        lcd.clear();
-        lcd.print( "A" );
+        display.clearDisplay();
+        display.println( "A" );
         break;
 
       case irButton_b :
-        lcd.clear();
-        lcd.print( "B" );
+        display.clearDisplay();
+        display.println( "B" );
         break;
 
       case irButton_c :
-        lcd.clear();
-        lcd.print( "C" );
+        display.clearDisplay();
+        display.println( "C" );
         break;
 
       case irButton_up :
         menu.moveUp();
 /*
-        lcd.clear();
-        lcd.print( "Up" );
+        display.clearDisplay();
+        display.println( "Up" );
 */
         break;
 
       case irButton_down :
         menu.moveDown();
 /*
-        lcd.clear();
-        lcd.print( "Down" );
+        display.clearDisplay();
+        display.println( "Down" );
 */
         break;
 
       case irButton_left :
         menu.moveLeft();
 /*
-        lcd.clear();
-        lcd.print( "Left" );
+        display.clearDisplay();
+        display.println( "Left" );
 */
         break;
 
       case irButton_right :
         menu.moveRight();
 /*
-        lcd.clear();
-        lcd.print( "Right" );
+        display.clearDisplay();
+        display.println( "Right" );
 */
         break;
 
       case irButton_circle :
         menu.use();
 /*
-        lcd.clear();
-        lcd.print( "Circle" );
+        display.clearDisplay();
+        display.println( "Circle" );
 */
         break;
 
       default :
-        lcd.clear();
-        lcd.print( "Unrecognized code received: 0x" );
+        display.clearDisplay();
+        display.println( "Unrecognized code received: 0x" );
         break;        
     }    
     irRecv.resume(); // Receive the next value
   }
 }
 
-class railPlan
-{
-  public:
-    railPlan( AccelStepper& stepper, int positionStart_pin, int positionEnd_pin );
-    int   resetPosition();
-    long  positionNow();
-    long  positionStart();
-    long  positionLeft();
-    long  positionEnd();
-    long  positionRight();
-  private:
-    int   setPositionStart();
-    int   setPositionEnd();
-    long  _positionStart;
-    int   _positionStart_pin;
-    int   _positionStart_state;
-    long  _positionEnd;
-    int   _positionEnd_pin;
-    int   _positionEnd_state;
-  AccelStepper& _stepper;
-};
-
-railPlan::railPlan( AccelStepper& stepper, int positionStart_pin, int positionEnd_pin ) :
-  _stepper( stepper )
-{
-  delay( 15 );
-};
-
-long railPlan::positionNow()
-{
-  return _stepper.currentPosition();
-};
-
-railPlan superplan( stepper, 6, 8 );
-
 void setup()
 {
+  // set the display to generate the high voltage from the Vin line
+  display.begin( SSD1306_SWITCHCAPVCC );
+  display.clearDisplay();   // clears the screen and buffer
+
+  display.setTextSize( 2 );
+  display.setTextColor( WHITE );
+  display.setCursor( 5, 35 );
+  display.println( "cameraPong" );
+  display.display();
+ 
+
   menuSetup();
 
   irRecv.enableIRIn(); // Start the receiver
 
-  lcd.clear();
-  lcd.print( "   cameraPong   " );
-  lcd.setSplash();
-
   pinMode( posLeft_pin, INPUT_PULLUP );
   pinMode( posRight_pin, INPUT_PULLUP );
 
+/*
   stepper.setMaxSpeed(300);
   stepper.setAcceleration( 15 );
   stepper.runToNewPosition( 1200 );
 
-  lcd.clear();
-  lcd.print( superplan.positionNow() );
+  display.clearDisplay();
+  display.println( superplan.positionNow() );
+*/
 }
 
 void loop()
 {
-/*
+
   navigate();
 
   posLeft_state  = digitalRead( posLeft_pin );
   posRight_state = digitalRead( posRight_pin );
-*/
+
   delay( 200 );
 }
 
