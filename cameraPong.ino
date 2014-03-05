@@ -50,12 +50,8 @@ The libraries require SPI and Wire as well.
 #include <Adafruit_SSD1306.h>
 
 // init the display driver using software SPI, pin assignments as follows
-#define OLED_MOSI   9
-#define OLED_CLK   10
-#define OLED_DC     6
-#define OLED_CS     8
-#define OLED_RESET  7
-Adafruit_SSD1306 display( OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS );
+// display( OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS )
+Adafruit_SSD1306 display( 9, 10, 6, 7, 8 );
 
 
 
@@ -282,8 +278,10 @@ void setup()
 
   irRecv.enableIRIn(); // Start the receiver
 
+/*
   pinMode( posLeft_pin, INPUT_PULLUP );
   pinMode( posRight_pin, INPUT_PULLUP );
+*/
 
 /*
   stepper.setMaxSpeed(300);
@@ -300,9 +298,10 @@ void loop()
 
   navigate();
 
+/*
   posLeft_state  = digitalRead( posLeft_pin );
   posRight_state = digitalRead( posRight_pin );
-
+*/
   delay( 200 );
 }
 
